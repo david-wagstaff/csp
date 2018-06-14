@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!-- saved from url=(0032)http://prajitr.github.io/jusCSP/ -->
+<html class="gr__prajitr_github_io">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>csp.js by PrajitR</title>
+
+    <link rel="stylesheet" href="./csp.js by PrajitR_files/styles.css">
+    <link rel="stylesheet" href="./csp.js by PrajitR_files/pygment_trac.css">
+
+    <script src="./csp.js by PrajitR_files/scale.fix.js.download"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+</head>
+<body data-gr-c-s-loaded="true">
+    <div class="wrapper">
+      <section>
+
+      <h3>
+        Einstein's Logic Puzzle
+      </h3>
+
+      <p>
+        Who drinks what?
+      </p>
+
+      <button id="map-button">Solve the Friends Drinking Problem</button>
+
+<script src="./csp.js by PrajitR_files/csp.js.download"></script>
+<script src="./csp.js by PrajitR_files/jquery.min.js.download"></script>
+<script>
+function solve() {
+	const DRINKS = ['pepsi', 'coke', 'water']
+	const PETS = ['cat', 'dog', 'fish']
+	const persons = [
+	  {
+		name: 'Abe',
+	  },
+	  {
+		name: 'Bob',
+	  },
+	  {
+		name: 'Chris',
+	  }
+	]
+	
+	let variables = {}
+	let constraints = []
+
+	variables['Abe.drink'] = ['coke']
+	variables['Bob.drink'] = ['pepsi']
+	variables['Bob.pet']   = ['cat']
+
+	for (let person of persons) {
+		if (!variables[`${person.name}.drink`]) variables[`${person.name}.drink`] = DRINKS
+		if (!variables[`${person.name}.pet`])   variables[`${person.name}.pet`]   = PETS
+
+	  for (let neighbor of persons) {
+			if (neighbor === person) continue
+			constraints.push([`${person.name}.drink`, `${neighbor.name}.drink`, neq]) // Constraint for each state.
+			constraints.push([`${person.name}.pet`, `${neighbor.name}.pet`, neq]) // Constraint for each state.
+	  }
+
+		constraints.push([`${person.name}.drink`,`${person.name}.pet`, drinkTiedToPet])
+		// constraints.push([`${person.name}.pet`,`${person.name}.drink`, petTiedToDrink])
+
+
+	}	
+
+	let einstein = {
+		variables,
+		constraints,
+		cb: visualize,
+		timeStep: 50
+	}  
+
+	var result = csp.solve(einstein)
+	setTimeout(function(){console.log(result)},1000)
+	
+	function drinkTiedToPet(drink, pet) {
+		// return ((drink!='water') && (pet!='fish')) 
+		if(drink=='water') {
+			if(pet=='fish') return true
+			return false
+ 		}
+		return true
+	}
+
+	// function petTiedToDrink(pet, drink) { 
+	// 	// console.log(pet, drink)
+	// 	return (drink=='water') && (pet=='fish') 
+	// }
+
+	function neq(c1, c2) { return c1 != c2; }
+
+	function eq(c1, c2) { return c1 == c2; }
+
+	function and(c1, c2) { return c1 && c2; }
+
+	function visualize(assigned) {
+	  for (var person in assigned) {
+		console.log(assigned[person])
+	  }
+	}
+
+}
+
+document.getElementById('map-button').onclick = solve;
+</script>
+
+     </section>
+    </div>
+
+</body>
+</html>
+<!-- variables['Abe'] = ['coke']
+variables['Bob'] = ['pepsi']		
+for (let person of persons) {
+	if (!variables[person.name]) variables[person.name] = DRINKS
+
+	for (let neighbor of persons) {
+		if (neighbor === person) continue
+		constraints.push([person.name, neighbor.name, neq]) // Constraint for each state.
+	}
+} -->
